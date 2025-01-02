@@ -1,0 +1,48 @@
+def largest_divisible_subsequence(arr):
+  """
+  Finds the largest consecutive subsequence with a sum divisible by 5.
+
+  Args:
+    arr: A list of integers representing stone values.
+
+  Returns:
+    A tuple (start, end) representing the start and end indices of the subsequence, or (-1, -1) if no such subsequence exists.
+  """
+
+  n = len(arr)
+  prefix_sum = [0] * n
+  prefix_sum[0] = arr[0] % 5
+
+  for i in range(1, n):
+    prefix_sum[i] = (prefix_sum[i-1] + arr[i]) % 5
+
+  # Create a dictionary to store the first occurrence of each prefix sum
+  first_occurrence = {}
+  max_len = 0
+  start_index = -1
+  end_index = -1
+
+  for i in range(n):
+    if prefix_sum[i] == 0:
+      max_len = i + 1
+      start_index = 0
+      end_index = i
+    elif prefix_sum[i] in first_occurrence:
+      current_len = i - first_occurrence[prefix_sum[i]]
+      if current_len > max_len:
+        max_len = current_len
+        start_index = first_occurrence[prefix_sum[i]] + 1
+        end_index = i
+    else:
+      first_occurrence[prefix_sum[i]] = i
+
+  return start_index, end_index
+
+# Example usage:
+stone_values = [2, 3, 5, 1, 7, 9, 10]
+start, end = largest_divisible_subsequence(stone_values)
+
+if start == -1:
+  print("No such subsequence exists.")
+else:
+  print("Largest subsequence:", stone_values[start:end+1])
